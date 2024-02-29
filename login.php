@@ -1,62 +1,44 @@
+<?php
+session_start();
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $username = $_POST['username'];
+    $password = $_POST['password'];
+
+    // เชื่อมต่อฐานข้อมูล
+    $conn = mysqli_connect("localhost", "root", "", "my_database");
+
+    // ตรวจสอบการเชื่อมต่อ
+    if (!$conn) {
+        die("Connection failed: " . mysqli_connect_error());
+    }
+
+    // ค้นหาผู้ใช้
+    $sql = "SELECT * FROM users WHERE username='$username' AND password='$password'";
+    $result = mysqli_query($conn, $sql);
+
+    // ตรวจสอบผลลัพธ์
+    if (mysqli_num_rows($result) == 1) {
+        // เข้าสู่ระบบสำเร็จ
+        $_SESSION['username'] = $username;
+        header("location: welcome.php");
+    } else {
+        // เข้าสู่ระบบไม่สำเร็จ
+        echo "Invalid username or password.";
+    }
+    mysqli_close($conn);
+}
+?>
 <!DOCTYPE html>
 <html>
 <head>
     <title>Login</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-        }
-        .container {
-            width: 300px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        h2 {
-            text-align: center;
-        }
-        input[type="text"],
-        input[type="password"],
-        input[type="submit"] {
-            width: 100%;
-            padding: 10px;
-            margin-top: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 3px;
-            box-sizing: border-box;
-        }
-        input[type="submit"] {
-            background-color: #4caf50;
-            color: white;
-            cursor: pointer;
-        }
-        input[type="submit"]:hover {
-            background-color: #45a049;
-        }
-    </style>
 </head>
 <body>
-    <div class="container">
-        <h2>Login</h2>
-        <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
-            <input type="text" name="username" placeholder="Username"><br>
-            <input type="password" name="password" placeholder="Password"><br>
-            <input type="submit" value="Login">
-        </form>
-    </div>
+    <h2>Login</h2>
+    <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
+        Username: <input type="text" name="username"><br><br>
+        Password: <input type="password" name="password"><br><br>
+        <input type="submit" value="Login">
+    </form>
 </body>
 </html>
-
-
-CREATE DATABASE IF NOT EXISTS my_database;
-USE my_database;
-
-CREATE TABLE IF NOT EXISTS users (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(50) NOT NULL,
-    password VARCHAR(255) NOT NULL
-);
